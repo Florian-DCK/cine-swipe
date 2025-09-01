@@ -22,10 +22,13 @@ model Film {
   release_date DateTime
   genre_ids    Int[]
   vote_average Float
+  runtime      Int?
   createdAt    DateTime    @default(now()) 
   
   latestList   LatestList? @relation("PopularFilms", fields: [latestListId], references: [id])
   latestListId Int?
+
+  genres       Genre[]     @relation("FilmGenres")
 }
 
 model User {
@@ -39,4 +42,10 @@ model LatestList {
   name      String
   films     Film[]   @relation("PopularFilms")
   createdAt DateTime @default(now())
+}
+
+model Genre {
+  id    Int    @id @default(autoincrement())
+  name  String
+  films Film[] @relation("FilmGenres")
 }

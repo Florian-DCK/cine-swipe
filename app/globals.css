@@ -1,1 +1,6 @@
 @import "tailwindcss";
+@theme {
+    --color-background: #213b4e;
+    --color-primary: #fe7c2b;
+    --color-white-faded: rgba(255, 255, 255, 0.8);
+}

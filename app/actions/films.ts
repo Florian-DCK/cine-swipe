@@ -84,6 +84,7 @@ export async function getFilmDetails(filmId: number) {
                     release_date: new Date(data.release_date),
                     genre_ids: data.genres.map((genre: any) => genre.id),
                     vote_average: data.vote_average,
+                    runtime: data.runtime
                 }
             });
             return { film: data, status: 201 };
@@ -123,4 +124,107 @@ export async function addToPopular(filmId: number, latestListId: number) {
     });
 
     return { message: "Film ajouté à la liste populaire", status: 200 };
+}
+
+export async function emptyPopulars() {
+    try {
+        await prisma.latestList.update({
+            where: { id: 1 },
+            data: {
+                films: {
+                    set: []
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Erreur lors de la vidange des films populaires :", error);
+    }
+}
+
+export async function refreshPopulars(region?: string, forced?: boolean) {
+    try {
+        if (!forced) {
+        const { missingFilms } = await compareListToTMDB(1, region);
+        if (missingFilms.length > 0) {
+            await emptyPopulars();
+            const popularFilms = await getPopularFilms(region, 40); // Récupère 40 films populaires
+            // console.log(popularFilms)
+            for (const film of popularFilms) {
+                await addToPopular(film.id, 1);
+            }
+        } else {
+            console.log("La liste des films populaires est déjà à jour avec TMDB.");
+        }} else {
+            const popularFilms = await getPopularFilms(region, 40); // Récupère 40 films populaires
+            await emptyPopulars();
+            for (const film of popularFilms) {
+                await addToPopular(film.id, 1);
+            }
+        }
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour des films populaires :", error);
+    }
+}
+
+export async function getList(id: number) {
+    try {
+        const list = await prisma.latestList.findUnique({
+            where: { id },
+            include: { films: true }
+        });
+        return list;
+    } catch (error) {
+        console.error("Erreur lors de la récupération de la liste :", error);
+        throw error;
+    }
+}
+
+export async function compareListToTMDB(listId: number, region?: string) {
+    try {
+        const list = await getList(listId);
+        if (!list) {
+            throw new Error("Liste non trouvée");
+        }
+
+        const tmdbFilms = await getPopularFilms(region, 40);
+
+        const missingFilms = list.films.filter(film => !tmdbFilms.some(tmdbFilm => tmdbFilm.id === film.id));
+
+        return { missingFilms };
+    } catch (error) {
+        console.error("Erreur lors de la comparaison de la liste avec TMDB :", error);
+        throw error;
+    }
+}
+
+export async function getImage(path: string) {
+    const response = await fetch(`https://image.tmdb.org/t/p/original/${path}`);
+    if (!response.ok) {
+        throw new Error("Erreur lors de la récupération de l'image");
+    }
+    return response.url;
+}
+
+export async function getGenresFromTMDB() {
+    const response = await fetch(`${TMDB}/genre/movie/list?api_key=${process.env.TMDB_API_KEY}&language=fr-FR`);
+    if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des genres");
+    }
+    const data = await response.json();
+    return data.genres;
+}
+
+export async function getGenreNameFromTMDB(id: number) {
+    const genres = await getGenresFromTMDB();
+    const genre = genres.find((g: { id: number }) => g.id === id);
+    return genre ? genre.name : null;
+}
+
+export async function getVideoFromTMDB(id: number) {
+    const response = await fetch(`${TMDB}/movie/${id}/videos?api_key=${process.env.TMDB_API_KEY}&language=fr-FR`);
+    if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des vidéos");
+    }
+    const data = await response.json();
+    return data.results;
 }

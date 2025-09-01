@@ -1,5 +1,5 @@
 "use client";
-import { addFilm, getPopularFilms, checkFilmExists, addToPopular } from "../actions/films";
+import { addFilm, getPopularFilms, checkFilmExists, addToPopular, refreshPopulars, getList, compareListToTMDB, getGenresFromTMDB } from "../actions/films";
 
 async function testFilm() {
     try {
@@ -91,7 +91,61 @@ export default function Home() {
               Ajouter aux films populaires
             </button>
         </form>
-
+        <form action={async (_formData: FormData) => { await refreshPopulars('FR'); }}>
+          <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+            Rafraîchir les films populaires
+          </button>
+        </form>
+        <form action={async (_formData: FormData) => { await refreshPopulars('FR', true); }}>
+          <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+            Rafraîchir les films populaires (forcé)
+          </button>
+        </form>
+        <form action={async (_formData: FormData) => {
+          const idValue = _formData.get("id");
+          const id = typeof idValue === "string" ? Number(idValue) : undefined;
+          if (typeof id === "number" && !isNaN(id)) {
+            const result = await getList(id);
+            if (result) {
+              alert("Liste récupérée avec succès.");
+              console.log(result);
+              console.log(result['films'][0]['id']);
+            } else {
+              alert("Une erreur est survenue lors de la récupération de la liste.");
+            }
+          } else {
+            alert("ID de la liste invalide.");
+          }
+        }}>
+          <input type="text" name="id" placeholder="ID de la liste" required />
+          <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+            Récupérer la liste
+          </button>
+        </form>
+        <form action={async (formData: FormData) => {
+          const idValue = formData.get("id");
+          const id = typeof idValue === "string" ? Number(idValue) : undefined;
+          if (typeof id === "number" && !isNaN(id)) {
+            const result = await compareListToTMDB(id);
+            if (result) {
+              alert("Comparaison effectuée avec succès.");
+              console.log(result);
+            } else {
+              alert("Une erreur est survenue lors de la comparaison.");
+            }
+          } else {
+            alert("ID de la liste invalide.");
+          }
+        }}>
+          <input type="text" name="id" placeholder="ID de la liste" required />
+          <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+            Comparer avec TMDB
+          </button>
+        </form>
+        <button onClick={async () => {
+          const genres = await getGenresFromTMDB();
+          console.log(genres);
+        }}>Récupérer les genres</button>
       </section>
     </div>
   );
