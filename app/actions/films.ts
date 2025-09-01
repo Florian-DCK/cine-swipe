@@ -4,7 +4,7 @@ import { prisma } from "../lib/prisma";
 const TMDB = 'https://api.themoviedb.org/3';
 
 
-export async function addFilm(id: number, title: string, poster_path: string, overview: string, release_date: string, genre_ids: number[], vote_average: number) {
+export async function addFilm(id: number, title: string, poster_path: string, backdrop_path: string | null, overview: string, release_date: string, genre_ids: number[], vote_average: number) {
     if (await prisma.film.findUnique({ where: { id } })) {
         return { error: 'Film already exists', status: 409 };
     }
@@ -13,6 +13,7 @@ export async function addFilm(id: number, title: string, poster_path: string, ov
             id,
             title,
             poster_path,
+            backdrop_path,
             overview,
             release_date: new Date(release_date),
             genre_ids,
@@ -64,6 +65,7 @@ export async function getFilmDetails(filmId: number) {
                     id: data.id,
                     title: data.title,
                     poster_path: data.poster_path,
+                    backdrop_path: data.backdrop_path,
                     overview: data.overview,
                     release_date: new Date(data.release_date),
                     genre_ids: data.genres.map((genre: any) => genre.id),
@@ -90,6 +92,7 @@ export async function addToPopular(filmId: number, latestListId: number) {
             filmDetails.film.id,
             filmDetails.film.title,
             filmDetails.film.poster_path,
+            filmDetails.film.backdrop_path,
             filmDetails.film.overview,
             filmDetails.film.release_date,
             filmDetails.film.genre_ids,

@@ -24,3 +24,25 @@
   clip-path: path("M 0 0 Q 50% 65% 100% 0 L 100% 100% L 0 100% Z");
   -webkit-clip-path: path("M 0 0 Q 50% 65% 100% 0 L 100% 100% L 0 100% Z");
 }
+
+.relative-shadow {
+  overflow: visible;
+}
+.relative-shadow::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 40px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.18), transparent);
+  z-index: 1;
+  clip-path: none; /* Retire le clip-path pour que la shadow soit droite */
+}
+
+/* Ajoute cette classe à ton fichier CSS */
+/* filepath: c:\Users\fdonc\Documents\Code\cine-swipe\app\globals.css */
+/* .footer-clip {
+  clip-path: path("M 0% 100% Q 60% 0% 100% 0% L 100% 100% Z");
+  -webkit-clip-path: path("M 0% 100% Q 60% 0% 100% 0% L 100% 100% Z");
+  background: var(--color-primary);
+} */

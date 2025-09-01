@@ -1,6 +1,6 @@
 'use client';
-import React, { use, useEffect, useState } from 'react';
-import { getGenreNameFromTMDB, getVideoFromTMDB } from '../actions/films';
+import React, { use, useEffect, useLayoutEffect, useState } from 'react';
+import { getGenreNameFromTMDB, getImage, getVideoFromTMDB } from '../actions/films';
 import { Info, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { Backdrop } from '@mui/material';
 
@@ -8,6 +8,7 @@ type FilmCardProps = {
     id: number;
     title: string;
     posterPath: string;
+    backdropPath: string | null;
     overview: string;
     releaseDate: string;
     genreIds: number[];
@@ -89,17 +90,18 @@ const FilmNoteVisual: React.FC<{ voteAverage: number }> = ({ voteAverage }) => {
 const FilmInfoPopup: React.FC<{ overview: string; releaseDate: string; voteAverage: number; videoId?: string | null; runtime?: number | null; title: string }> = ({ overview, releaseDate, voteAverage, videoId, runtime, title }) => {
     return (
         <div className="p-4 bg-primary text-background absolute bottom-0 z-50 font-bold">
-        <div className='w-full h-20 absolute -top-19 left-0 bg-primary flex items-center justify-center' style={{ clipPath: "ellipse(80% 100% at 50% 100%)" }}>
-            <h2 className='text-2xl font-bold'>{title}</h2>
+        <div className='w-full h-30 absolute -top-29 left-0 bg-primary flex items-center justify-center relative-shadow ' style={{ clipPath: "ellipse(80% 100% at 50% 100%)" }}>
+            <h2 className='text-2xl font-bold text-center max-w-4/5 mt-2'>{title}</h2>
         </div>
-            <p className='mb-1 text-center max-h-60 overflow-scroll'>{overview}</p>
+            <hr />
+            <p className='my-1 text-center max-h-60 overflow-scroll'>{overview}</p>
             <hr />
             <div className='grid grid-cols-3 items-center justify-center bg-background/70 my-5 py-2 rounded-lg text-primary'>
                 <p className='mb-1 text-center'>{releaseDate}</p>
                 <FilmNoteVisual voteAverage={voteAverage} />
                 <p className='text-center'>{runtime != null ? `${Math.floor(runtime / 60)}h ${runtime % 60}min` : ""}</p>
             </div>
-            {videoId && (
+            {videoId ? (
                 <div className="flex justify-center my-4">
                     <iframe
                         width="320"
@@ -111,7 +113,14 @@ const FilmInfoPopup: React.FC<{ overview: string; releaseDate: string; voteAvera
                         className="rounded"
                     />
                 </div>
-            )}
+            ) : (
+                <div className='flex justify-center my-4'>
+                    <div className='w-80 h-44 bg-background/70 flex items-center justify-center rounded-lg'>
+                        <p className='text-center text-gray-500'>Aucune bande-annonce disponible</p>
+                    </div>
+                </div>
+            )
+            }
         </div>
     );
 };
@@ -136,6 +145,7 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
     const [genreNames, setGenreNames] = useState<string[]>([]);
     const [showInfo, setShowInfo] = useState<boolean>(false);
     const [videoId, setVideoId] = useState<string | null>(null);
+    const [backdrop, setBackdrop] = useState<string | null>(null);
 
     // Pour le swipe
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
@@ -227,6 +237,23 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
         }
     }, [showInfo, props.id]);
 
+    // Met à jour le fond du body avec le backdropPath
+    useLayoutEffect(() => {
+        if (props.backdropPath) {
+            const previous = document.body.style.backgroundImage;
+            document.body.style.backgroundImage = `url(${props.backdropPath})`;
+            document.body.style.backgroundSize = 'cover';
+            document.body.style.backgroundPosition = 'center';
+            document.body.style.backgroundRepeat = 'no-repeat';
+            document.body.style.backgroundAttachment = 'fixed';
+            document.body.style.transition = 'background-image 0.5s';
+            // Nettoyage au démontage
+            return () => {
+                document.body.style.backgroundImage = previous;
+            };
+        }
+    }, [props.backdropPath]);
+
     const maxSwipe = 150;
     const acceptOpacity = translateX > 0 ? Math.min(translateX / maxSwipe, 1) : 0;
     const denyOpacity = translateX < 0 ? Math.min(-translateX / maxSwipe, 1) : 0;
@@ -238,7 +265,7 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
     return (
         <>
             <div
-                className='p-4 rounded max-w-sm bg-primary/85 text-background relative transition-all'
+                className='p-4 rounded max-w-sm bg-primary text-background relative transition-all'
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
@@ -250,7 +277,7 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
             >
                 <h2 className='text-2xl font-bold text-center mb-4 uppercase'>{props.title}</h2>
                 <img src={props.posterPath} alt={props.title} className='w-full h-auto' />
-                <div className='flex flex-wrap my-4 justify-center space-y-2'>
+                <div className='flex flex-wrap my-4 justify-center gap-y-2'>
                     {genreNames.map((genre) => (
                         <GenreBadge key={genre} genre={genre} />
                     ))}
@@ -261,7 +288,7 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
             {!showInfo && (
                 <button
                     onClick={() => setShowInfo(true)}
-                    className='fixed bottom-8 right-8 cursor-pointer text-primary z-50 bg-background/80 rounded-full p-3 shadow-lg'
+                    className='fixed bottom-0 right-0 cursor-pointer text-background z-50 rounded-full p-3'
                 >
                     <Info className='size-10' />
                 </button>

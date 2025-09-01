@@ -28,6 +28,7 @@ model Film {
   id           Int         @id @default(autoincrement())
   title        String
   poster_path  String
+  backdrop_path String?
   overview     String
   release_date DateTime
   genre_ids    Int[]
