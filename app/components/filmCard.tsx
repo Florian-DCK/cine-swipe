@@ -145,7 +145,7 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
     };
 
     const handleSwipeRight = () => {
-        if (props.onSwipeRight) props.onSwipeRight();
+        if (props.onSwipeRight) props.onSwipeRight(); // <-- Modifié
     };
 
     const minSwipeDistance = 50; // px
@@ -229,6 +229,12 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
     const acceptOpacity = translateX > 0 ? Math.min(translateX / maxSwipe, 1) : 0;
     const denyOpacity = translateX < 0 ? Math.min(-translateX / maxSwipe, 1) : 0;
 
+    // Ajout du tilt : l'angle dépend de la distance de swipe
+    const maxTilt = 15; // degrés
+    const tilt = (translateX / maxSwipe) * maxTilt;
+    // Limite le tilt à [-maxTilt, maxTilt]
+    const tiltClamped = Math.max(Math.min(tilt, maxTilt), -maxTilt);
+
     return (
         <>
             <div
@@ -237,7 +243,7 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
                 style={{
-                    transform: `translateX(${translateX}px)`,
+                    transform: `translateX(${translateX}px) rotate(${tiltClamped}deg)`,
                     transition: isSwiping ? 'none' : 'transform 0.2s cubic-bezier(.4,2,.6,1)',
                     touchAction: 'pan-y'
                 }}
