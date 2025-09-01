@@ -86,9 +86,12 @@ const FilmNoteVisual: React.FC<{ voteAverage: number }> = ({ voteAverage }) => {
     );
 };
 
-const FilmInfoPopup: React.FC<{ overview: string; releaseDate: string; voteAverage: number; videoId?: string | null; runtime?: number | null }> = ({ overview, releaseDate, voteAverage, videoId, runtime }) => {
+const FilmInfoPopup: React.FC<{ overview: string; releaseDate: string; voteAverage: number; videoId?: string | null; runtime?: number | null; title: string }> = ({ overview, releaseDate, voteAverage, videoId, runtime, title }) => {
     return (
-        <div className='p-4 bg-primary text-background rounded absolute bottom-0 z-50 font-bold'>
+        <div className="p-4 bg-primary text-background absolute bottom-0 z-50 font-bold">
+        <div className='w-full h-20 absolute -top-19 left-0 bg-primary flex items-center justify-center' style={{ clipPath: "ellipse(80% 100% at 50% 100%)" }}>
+            <h2 className='text-2xl font-bold'>{title}</h2>
+        </div>
             <p className='mb-1 text-center max-h-60 overflow-scroll'>{overview}</p>
             <hr />
             <div className='grid grid-cols-3 items-center justify-center bg-background/70 my-5 py-2 rounded-lg text-primary'>
@@ -274,6 +277,7 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
                     voteAverage={props.voteAverage}
                     videoId={showInfo ? videoId : null}
                     runtime={props.runtime}
+                    title={props.title}
                 />
             </Backdrop>
         </>

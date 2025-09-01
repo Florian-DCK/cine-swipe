@@ -89,7 +89,7 @@ export default function Home() {
     : null;
 
   return (
-    <div className="flex items-center justify-center min-h-screen font-sans p-8 pb-20 sm:p-20">
+    <div className="flex items-center justify-center font-sans p-8 pb-20 sm:p-20">
       {!isLoading && film && posterUrl && filmProps ? (
       <div className="animate-slide-down">
         <FilmCard
