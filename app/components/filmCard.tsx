@@ -5,7 +5,7 @@ import { Info, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { Backdrop } from '@mui/material';
 
 type FilmCardProps = {
-    id: number; // <-- Ajouté
+    id: number;
     title: string;
     posterPath: string;
     overview: string;
@@ -13,6 +13,8 @@ type FilmCardProps = {
     genreIds: number[];
     voteAverage: number;
     runtime: number | null;
+    onSwipeLeft?: () => void;   // <-- Modifié
+    onSwipeRight?: () => void;  // <-- Modifié
 };
 
 const GenreBadge: React.FC<{ genre: string }> = ({ genre }) => {
@@ -87,7 +89,7 @@ const FilmNoteVisual: React.FC<{ voteAverage: number }> = ({ voteAverage }) => {
 const FilmInfoPopup: React.FC<{ overview: string; releaseDate: string; voteAverage: number; videoId?: string | null; runtime?: number | null }> = ({ overview, releaseDate, voteAverage, videoId, runtime }) => {
     return (
         <div className='p-4 bg-primary text-background rounded absolute bottom-0 z-50 font-bold'>
-            <p className='mb-1 text-center '>{overview}</p>
+            <p className='mb-1 text-center max-h-60 overflow-scroll'>{overview}</p>
             <hr />
             <div className='grid grid-cols-3 items-center justify-center bg-background/70 my-5 py-2 rounded-lg text-primary'>
                 <p className='mb-1 text-center'>{releaseDate}</p>
@@ -139,13 +141,11 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
     const [isSwiping, setIsSwiping] = useState<boolean>(false);
 
     const handleSwipeLeft = () => {
-        console.log('Swiped left');
-        // Ajoute ici l'action à effectuer sur swipe gauche
+        if (props.onSwipeLeft) props.onSwipeLeft();
     };
 
     const handleSwipeRight = () => {
-        console.log('Swiped right');
-        // Ajoute ici l'action à effectuer sur swipe droite
+        if (props.onSwipeRight) props.onSwipeRight();
     };
 
     const minSwipeDistance = 50; // px
@@ -244,7 +244,7 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
             >
                 <h2 className='text-2xl font-bold text-center mb-4 uppercase'>{props.title}</h2>
                 <img src={props.posterPath} alt={props.title} className='w-full h-auto' />
-                <div className='flex flex-wrap my-4 justify-center'>
+                <div className='flex flex-wrap my-4 justify-center space-y-2'>
                     {genreNames.map((genre) => (
                         <GenreBadge key={genre} genre={genre} />
                     ))}

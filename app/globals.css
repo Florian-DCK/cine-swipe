@@ -4,3 +4,18 @@
     --color-primary: #fe7c2b;
     --color-white-faded: rgba(255, 255, 255, 0.8);
 }
+
+@keyframes slideDownFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-down {
+  animation: slideDownFadeIn 0.5s cubic-bezier(0.4,0,0.2,1);
+}
