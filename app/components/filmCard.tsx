@@ -13,8 +13,8 @@ type FilmCardProps = {
     genreIds: number[];
     voteAverage: number;
     runtime: number | null;
-    onSwipeLeft?: () => void;   // <-- Modifié
-    onSwipeRight?: () => void;  // <-- Modifié
+    onSwipeLeft?: () => void;
+    onSwipeRight?: () => void;
 };
 
 const GenreBadge: React.FC<{ genre: string }> = ({ genre }) => {
@@ -145,7 +145,7 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
     };
 
     const handleSwipeRight = () => {
-        if (props.onSwipeRight) props.onSwipeRight(); // <-- Modifié
+        if (props.onSwipeRight) props.onSwipeRight();
     };
 
     const minSwipeDistance = 50; // px
@@ -224,21 +224,18 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
         }
     }, [showInfo, props.id]);
 
-    // Calcul de l'opacité (ajoutez ceci dans le composant FilmCard, avant le return)
-    const maxSwipe = 150; // px, distance à partir de laquelle l'opacité est maximale
+    const maxSwipe = 150;
     const acceptOpacity = translateX > 0 ? Math.min(translateX / maxSwipe, 1) : 0;
     const denyOpacity = translateX < 0 ? Math.min(-translateX / maxSwipe, 1) : 0;
 
-    // Ajout du tilt : l'angle dépend de la distance de swipe
-    const maxTilt = 15; // degrés
+    const maxTilt = 15;
     const tilt = (translateX / maxSwipe) * maxTilt;
-    // Limite le tilt à [-maxTilt, maxTilt]
     const tiltClamped = Math.max(Math.min(tilt, maxTilt), -maxTilt);
 
     return (
         <>
             <div
-                className='p-4 rounded max-w-sm bg-primary/70 text-background relative'
+                className='p-4 rounded max-w-sm bg-primary/70 text-background relative transition-all'
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}

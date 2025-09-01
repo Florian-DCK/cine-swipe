@@ -30,9 +30,9 @@ export default function Home() {
 
           if (typeof title === "string" && typeof poster_path === "string" && typeof overview === "string" &&
               typeof release_date === "string" && Array.isArray(genre_ids) && typeof vote_average === "number") {
-            // Remplacez 0 par l'ID réel du film si nécessaire
+
             const result = await addFilm(
-              0, // id (à remplacer par un vrai identifiant si besoin)
+              0,
               title,
               poster_path,
               overview,

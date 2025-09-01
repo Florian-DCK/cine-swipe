@@ -3,11 +3,7 @@
 import { prisma } from "../lib/prisma";
 const TMDB = 'https://api.themoviedb.org/3';
 
-//
-// Ajoute un film à la base de données
-// IN : id : number, title : string, poster_path : string, overview : string, release_date : string, genre_ids : number[], vote_average : number
-// OUT : Promise<{ film: Film, status: number }>
-//
+
 export async function addFilm(id: number, title: string, poster_path: string, overview: string, release_date: string, genre_ids: number[], vote_average: number) {
     if (await prisma.film.findUnique({ where: { id } })) {
         return { error: 'Film already exists', status: 409 };
@@ -26,11 +22,7 @@ export async function addFilm(id: number, title: string, poster_path: string, ov
     return { film, status: 201 };
 }
 
-//
-// Retire un film de la base de données
-// IN : id : number
-// OUT : Promise<{ message: string, status: number }>
-//
+
 export async function removeFilm(id: number) {
     const film = await prisma.film.findUnique({ where: { id } });
     if (!film) {
@@ -40,21 +32,13 @@ export async function removeFilm(id: number) {
     return { message: 'Film deleted successfully', status: 200 };
 }
 
-//
-// Vérifie si un film existe dans la base de données
-// IN : id : number
-// OUT : Promise<{ exists: boolean }>
-//
+
 export async function checkFilmExists(id: number) {
     const film = await prisma.film.findUnique({ where: { id } });
     return { exists: !!film };
 }
 
-//
-// Retourne <amount> films populaires (au plus proche d'un multiple de 20) de la région
-// IN : region? : string, amount? : number
-// OUT : Promise<Film[]>
-//
+
 export async function getPopularFilms(region?: string, amount?: number) {
     const apiKey = process.env.TMDB_API_KEY;
     const numberOfPages = amount ? Math.ceil(amount / 20) : 1;
@@ -95,7 +79,7 @@ export async function getFilmDetails(filmId: number) {
 }
 
 export async function addToPopular(filmId: number, latestListId: number) {
-    // Vérifie si le film existe, sinon va le chercher et l'ajoute
+
     const exists = await checkFilmExists(filmId);
     if (!exists.exists) {
         const filmDetails = await getFilmDetails(filmId);
@@ -113,7 +97,7 @@ export async function addToPopular(filmId: number, latestListId: number) {
         );
     }
 
-    // Ajoute le film à la LatestList existante
+
     await prisma.latestList.update({
         where: { id: latestListId },
         data: {
@@ -147,15 +131,14 @@ export async function refreshPopulars(region?: string, forced?: boolean) {
         const { missingFilms } = await compareListToTMDB(1, region);
         if (missingFilms.length > 0) {
             await emptyPopulars();
-            const popularFilms = await getPopularFilms(region, 40); // Récupère 40 films populaires
-            // console.log(popularFilms)
+            const popularFilms = await getPopularFilms(region, 40);
             for (const film of popularFilms) {
                 await addToPopular(film.id, 1);
             }
         } else {
             console.log("La liste des films populaires est déjà à jour avec TMDB.");
         }} else {
-            const popularFilms = await getPopularFilms(region, 40); // Récupère 40 films populaires
+            const popularFilms = await getPopularFilms(region, 40);
             await emptyPopulars();
             for (const film of popularFilms) {
                 await addToPopular(film.id, 1);

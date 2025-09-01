@@ -14,12 +14,12 @@ type Film = {
   vote_average: number;
   createdAt: Date;
   latestListId: number | null;
-  runtime: number | null; // Allow runtime to be null
+  runtime: number | null;
 };
 
 type PopularFilmsResponse = {
   films: Film[];
-  // add other properties if getList returns more
+
 };
 
 export default function Home() {
@@ -43,7 +43,7 @@ export default function Home() {
     fetchPopularFilms();
   }, []);
 
-  // Met à jour l'affiche quand l'index change
+
   useEffect(() => {
     const updatePoster = async () => {
       if (popularFilm && popularFilm.films.length > 0) {
