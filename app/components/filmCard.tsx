@@ -235,7 +235,7 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
     return (
         <>
             <div
-                className='p-4 rounded max-w-sm bg-primary/70 text-background relative transition-all'
+                className='p-4 rounded max-w-sm bg-primary/85 text-background relative transition-all'
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
