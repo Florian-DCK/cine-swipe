@@ -37,7 +37,7 @@ const Navbar: React.FC = () => {
     };
 
     return (
-        <nav ref={navRef} className='w-full p-4 text-background flex items-center justify-between font-bold fixed z-50'>
+        <nav ref={navRef} className='w-full p-4 text-background flex items-center justify-between font-bold fixed z-50 '>
             <div className='absolute left-0 top-0 w-full h-[100px] pointer-events-none -z-10'>
                 <svg
                     width="100%"

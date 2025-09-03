@@ -131,9 +131,11 @@ export default function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             transition: 'opacity 0.5s',
-            backdropFilter: 'blur(12px)',
+            // backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
-            backgroundColor: 'rgba(20,20,30,0.65)'
+            backgroundColor: 'rgba(20,20,30,0.65)',
+            // Ajout : toujours visible si le nouveau backdrop n'est pas prêt
+            visibility: backdropUrl ? 'visible' : 'visible'
           }}
           aria-hidden="true"
         />
@@ -149,9 +151,11 @@ export default function Home() {
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
             transition: 'opacity 0.5s',
-            backdropFilter: 'blur(12px)',
+            // backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
-            backgroundColor: 'rgba(20,20,30,0.65)'
+            backgroundColor: 'rgba(20,20,30,0.65)',
+            // Ajout : toujours visible pendant la transition
+            visibility: 'visible'
           }}
           aria-hidden="true"
         >

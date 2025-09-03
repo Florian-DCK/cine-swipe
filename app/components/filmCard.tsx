@@ -20,7 +20,7 @@ type FilmCardProps = {
 
 const GenreBadge: React.FC<{ genre: string }> = ({ genre }) => {
     return (
-        <span className='inline-block bg-background text-white-faded rounded-sm px-2 py-1 text-sm font-semibold mr-2'>
+        <span className='inline-block bg-background text-white-faded rounded-sm px-2 py-1 text-sm font-semibold mr-2 glass'>
             {genre}
         </span>
     );
@@ -265,7 +265,7 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
     return (
         <>
             <div
-                className='p-4 rounded max-w-sm bg-primary text-background relative transition-all'
+                className='p-4 rounded max-w-sm glass text-primary relative transition-all'
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
@@ -276,7 +276,7 @@ const FilmCard: React.FC<FilmCardProps> = (props) => {
                 }}
             >
                 <h2 className='text-2xl font-bold text-center mb-4 uppercase'>{props.title}</h2>
-                <img src={props.posterPath} alt={props.title} className='w-full h-auto' />
+                <img src={props.posterPath} alt={props.title} className='w-full h-auto rounded-2xl border border-primary' />
                 <div className='flex flex-wrap my-4 justify-center gap-y-2'>
                     {genreNames.map((genre) => (
                         <GenreBadge key={genre} genre={genre} />
