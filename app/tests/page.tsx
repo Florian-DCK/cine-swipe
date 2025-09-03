@@ -35,6 +35,7 @@ export default function Home() {
               0,
               title,
               poster_path,
+              null, // or provide a value for backdrop_path if available
               overview,
               release_date,
               typeof genre_ids === "string"
